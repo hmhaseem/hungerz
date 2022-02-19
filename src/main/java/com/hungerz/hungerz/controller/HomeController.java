@@ -31,8 +31,9 @@ public class HomeController {
         return "Welcome to Daily Code Buffer!!";
     }
 
+    @CrossOrigin
     @PostMapping("/authenticate")
-    public JwtResponse authenticate(@RequestBody JwtRequest jwtRequest) throws Exception{
+    public ResponseEntity authenticate(@RequestBody JwtRequest jwtRequest) throws Exception {
 
         try {
             authenticationManager.authenticate(
@@ -51,7 +52,8 @@ public class HomeController {
         final String token =
                 jwtUtility.generateToken(userDetails);
 
-        return  new JwtResponse(token);
+
+        return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername()));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
