@@ -1,12 +1,16 @@
 package com.hungerz.hungerz.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hungerz.hungerz.dto.ProductDto;
 import com.hungerz.hungerz.entity.ProductEntity;
 import com.hungerz.hungerz.repository.ProductRepo;
+import com.hungerz.hungerz.utility.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class ProductService {
@@ -16,16 +20,26 @@ public class ProductService {
 
     Logger logger = LoggerFactory.getLogger(ProductService.class);
 
-    public ProductEntity saveProduct(ProductDto productDto) {
+    public CommonResponse saveProduct(ProductDto productDto) {
 
-        ProductEntity product = new ProductEntity();
-        product.setProductPrice(productDto.getProductPrice());
-        product.setProductName(productDto.getProductName());
-        product.setProductStatus(productDto.getProductStatus());
-        product.setProductPrice(productDto.getProductPrice());
-        product.setCategoryId(productDto.getCategoryId());
-        logger.info("Product saved successfully");
-        return productRepo.save(product);
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            ProductEntity product = mapper.convertValue(productDto, ProductEntity.class);
+            ProductEntity products = productRepo.save(product);
+            logger.info("Product saved successfully");
+            commonResponse.setMessage("Product saved successfully");
+            commonResponse.setPayload(products);
+            commonResponse.setStatus(true);
+        } catch (Exception e) {
+            logger.info("There is something issue due to  : {}", e.getMessage());
+            commonResponse.setMessage("There is something issue due to :" + e.getMessage());
+            commonResponse.setStatus(true);
+        }
+        return commonResponse;
 
     }
+
+    
 }
