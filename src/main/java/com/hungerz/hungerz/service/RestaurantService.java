@@ -1,10 +1,12 @@
 package com.hungerz.hungerz.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hungerz.hungerz.dto.RestaurantDto;
 import com.hungerz.hungerz.entity.RestaurantsEntity;
 import com.hungerz.hungerz.repository.RestaurantRepo;
 
 
+import com.hungerz.hungerz.utility.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +20,15 @@ public class RestaurantService {
 
     Logger logger = LoggerFactory.getLogger(RestaurantService.class);
 
-    public RestaurantsEntity saveRestaurant(RestaurantDto restaurantDto) {
-
-        RestaurantsEntity restaurants = new RestaurantsEntity();
-        restaurants.setRestaurantEmail(restaurantDto.getRestaurantEmail());
-        restaurants.setRestaurantAddress(restaurantDto.getRestaurantAddress());
-        restaurants.setRestaurantLogo(restaurantDto.getRestaurantLogo());
-        restaurants.setRestaurantName(restaurantDto.getRestaurantName());
-        restaurants.setRestaurantCurrency(restaurantDto.getRestaurantCurrency());
-        restaurants.setRestaurantContactNo(restaurantDto.getRestaurantContactNo());
-        restaurants.setRestaurantTagLine(restaurantDto.getRestaurantTagLine());
-        restaurants.setRestaurantTimeZone(restaurantDto.getRestaurantTimeZone());
-        logger.debug(restaurants.getRestaurantAddress());
-        return restaurantRepo.save(restaurants);
-
+    public CommonResponse saveRestaurant(RestaurantDto restaurantDto) {
+        logger.info("saveRestaurant Method access");
+        CommonResponse commonResponse = new CommonResponse();
+        ObjectMapper mapper = new ObjectMapper();
+        RestaurantsEntity restaurants = mapper.convertValue(restaurantDto, RestaurantsEntity.class);
+        restaurantRepo.save(restaurants);
+        commonResponse.setStatus(true);
+        commonResponse.setMessage("Restaurant Saved successfully");
+        commonResponse.setPayload(restaurants);
+        return commonResponse;
     }
 }

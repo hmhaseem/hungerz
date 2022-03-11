@@ -1,7 +1,7 @@
 package com.hungerz.hungerz.service;
 
 
-import com.hungerz.hungerz.dto.CategoryDto;
+ import com.hungerz.hungerz.dto.CategoryDto;
 import com.hungerz.hungerz.entity.CategoryEntity;
 import com.hungerz.hungerz.repository.CategoryRepo;
 import com.hungerz.hungerz.utility.CommonResponse;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
@@ -20,33 +20,44 @@ public class CategoryService {
     CategoryRepo categoryRepo;
 
     Logger logger = LoggerFactory.getLogger(CategoryService.class);
+    CommonResponse commonResponse = new CommonResponse();
 
-    public CategoryEntity saveCategory(CategoryDto categoryDto) {
+    public CommonResponse saveCategory(CategoryDto categoryDto) {
+        logger.info("saveCategory method accessed");
+        try {
+            CategoryEntity category = new CategoryEntity();
+            category.setCategoryName(categoryDto.getCategoryName());
+            category.setCategoryStatus(categoryDto.getCategoryStatus());
+            categoryRepo.save(category);
+            commonResponse.setPayload(category);
+            commonResponse.setMessage("Category saved successfully");
+            commonResponse.setStatus(true);
+            logger.info("Category saved successfully.. ");
+        } catch (Exception e) {
+            commonResponse.setMessage("There something happened due to this " + e.getMessage());
+            commonResponse.setStatus(false);
+            logger.info("There something happened due to this {}", e.getMessage());
+        }
 
-        CategoryEntity category = new CategoryEntity();
-        category.setCategoryName(categoryDto.getCategoryName());
-        category.setCategoryStatus(categoryDto.getCategoryStatus());
-        logger.info("saved the category");
-        return categoryRepo.save(category);
+        return commonResponse;
 
     }
 
-
-    CommonResponse commonResponse = new CommonResponse();
-
-    public List<CategoryEntity> getCategoryList() {
-        return categoryRepo.findAll();
+    public CommonResponse getCategoryList() {
+        commonResponse.setStatus(true);
+        commonResponse.setPayload(categoryRepo.findAll());
+        commonResponse.setMessage("Data Retrieved successfully");
+        return commonResponse;
     }
 
     public CommonResponse findCategoryById(int id) {
-
         commonResponse.setMessage("Date retrieve from DB successfully");
         commonResponse.setStatus(true);
         commonResponse.setPayload(categoryRepo.findByCategoryId(id));
         return commonResponse;
     }
 
-    public CommonResponse UpdateCategory(CategoryDto categoryDto) {
+    public CommonResponse updateCategory(CategoryDto categoryDto) {
         try {
             Optional<CategoryEntity> categoryEntityOptional = categoryRepo.findByCategoryId(categoryDto.getCategoryId());
 
@@ -81,13 +92,9 @@ public class CategoryService {
             commonResponse.setStatus(true);
             return commonResponse;
         } catch (Exception e) {
-
             commonResponse.setStatus(false);
-            commonResponse.setMessage("there is some issue due to this : " + e.getMessage());
+            commonResponse.setMessage("There is some issue due to this : " + e.getMessage());
             return commonResponse;
-
         }
-
-
     }
 }

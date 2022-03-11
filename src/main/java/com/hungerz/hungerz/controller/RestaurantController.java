@@ -37,24 +37,21 @@ public class RestaurantController {
     Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
     @PostMapping("saveRestaurant")
-    public ResponseEntity<?> saveRestaurant(@RequestBody RestaurantDto restaurantDto) {
-        return ResponseEntity.ok(restaurantService.saveRestaurant(restaurantDto));
+    public CommonResponse saveRestaurant(@RequestBody RestaurantDto restaurantDto) {
+        return restaurantService.saveRestaurant(restaurantDto);
     }
 
     @CrossOrigin
     @GetMapping("listCategory")
-    public ResponseEntity<Map> listCategory() {
-
-        Map map = new HashMap();
-        map.put("status", "success");
-        map.put("result", categoryService.getCategoryList());
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public CommonResponse listCategory() {
+        logger.info("listCategory method access");
+        return categoryService.getCategoryList();
     }
 
     @CrossOrigin
     @PostMapping("saveCategory")
-    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
-        return ResponseEntity.ok(categoryService.saveCategory(categoryDto));
+    public CommonResponse saveCategory(@RequestBody CategoryDto categoryDto) {
+        return categoryService.saveCategory(categoryDto);
     }
 
     @CrossOrigin
@@ -76,7 +73,7 @@ public class RestaurantController {
     @PostMapping("updateCategory")
     public CommonResponse updateCategory(@RequestBody CategoryDto categoryDto) {
         logger.info("UpdateCategory method access");
-        return categoryService.UpdateCategory(categoryDto);
+        return categoryService.updateCategory(categoryDto);
     }
 
 

@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class ProductService {
@@ -19,10 +21,11 @@ public class ProductService {
     ProductRepo productRepo;
 
     Logger logger = LoggerFactory.getLogger(ProductService.class);
+    CommonResponse commonResponse = new CommonResponse();
 
     public CommonResponse saveProduct(ProductDto productDto) {
 
-        CommonResponse commonResponse = new CommonResponse();
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -41,5 +44,42 @@ public class ProductService {
 
     }
 
-    
+    public CommonResponse findByProductId(int id) {
+        Optional<ProductEntity> product = productRepo.findById(id);
+        if (product.isPresent()) {
+            commonResponse.setMessage("Product retrieved successfully...");
+            commonResponse.setStatus(true);
+            commonResponse.setPayload(product);
+        } else {
+            commonResponse.setMessage("Product not fount or something happened");
+            commonResponse.setStatus(false);
+        }
+
+        return commonResponse;
+    }
+
+    public CommonResponse updateProduct(ProductDto productDto) {
+
+
+        Optional<ProductEntity> product = productRepo.findById(productDto.getCategoryId());
+
+        if (product.isPresent()) {
+            ProductEntity productEntity = product.get();
+            productEntity.setProductPrice(productDto.getProductPrice());
+            productEntity.setProductName(productDto.getProductName());
+            productEntity.setProductPrice(productDto.getProductPrice());
+            productEntity.setProductStatus(productDto.getProductStatus());
+            productRepo.save(productEntity);
+            commonResponse.setStatus(true);
+            commonResponse.setMessage("Product updated successfully..");
+            commonResponse.setPayload(productEntity);
+            logger.info("Product updated successfully..");
+        }
+        commonResponse.setStatus(false);
+        commonResponse.setMessage("There is some issue for updating process .....");
+        logger.info("There is some issue for updating process .....");
+        return commonResponse;
+    }
+
+
 }
