@@ -1,7 +1,7 @@
 package com.hungerz.hungerz.service;
 
 
- import com.hungerz.hungerz.dto.CategoryDto;
+import com.hungerz.hungerz.dto.CategoryDto;
 import com.hungerz.hungerz.entity.CategoryEntity;
 import com.hungerz.hungerz.repository.CategoryRepo;
 import com.hungerz.hungerz.utility.CommonResponse;
