@@ -35,10 +35,16 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public Integer getRoleIdByUserName(String userName){
+        UserEntity user = userRepo.findByUsername(userName);
+        return user.getRole();
+    }
+
     public UserEntity save(UserDto userDto) {
         UserEntity user = new UserEntity();
         user.setUsername(userDto.getUsername());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setRole(1);
         return userRepo.save(user);
     }
 }

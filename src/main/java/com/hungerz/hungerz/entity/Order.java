@@ -1,33 +1,32 @@
 package com.hungerz.hungerz.entity;
 
 
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
+    private long orderId;
 
-    @Column(name = "order_name")
+    @Column(name = "order_number")
     private long orderNumber;
 
     @Column(name = "order_time")
     private String orderTime;
 
-    @Column(name = "order_quantity")
-    private int orderQuantity;
-
-    @Column(name = "cross_amount")
-    private double crossAmount;
-
-    @Column(name = "order_price")
-    private double orderPrice;
+    @Column(name = "total_amount")
+    private double totalAmount;
 
     @Column(name = "order_status")
     private int orderStatus;
@@ -43,6 +42,7 @@ public class Order {
 
     @Column(name = "customer_address")
     private String customerAddress;
+
 
 
 }

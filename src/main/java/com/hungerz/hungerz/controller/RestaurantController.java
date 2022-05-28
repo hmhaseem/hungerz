@@ -1,31 +1,24 @@
 package com.hungerz.hungerz.controller;
 
 
-import com.hungerz.hungerz.dto.CategoryDto;
-import com.hungerz.hungerz.dto.ProductDto;
-import com.hungerz.hungerz.dto.RestaurantDto;
-import com.hungerz.hungerz.dto.UserDto;
-import com.hungerz.hungerz.entity.RestaurantsEntity;
-import com.hungerz.hungerz.service.CategoryService;
-import com.hungerz.hungerz.service.ProductService;
-import com.hungerz.hungerz.service.RestaurantService;
+import com.hungerz.hungerz.dto.*;
+import com.hungerz.hungerz.service.*;
 import com.hungerz.hungerz.utility.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("api/v1/")
+@CrossOrigin("*")
 public class RestaurantController {
 
     @Autowired
     RestaurantService restaurantService;
-
 
     @Autowired
     CategoryService categoryService;
@@ -33,6 +26,11 @@ public class RestaurantController {
     @Autowired
     ProductService productService;
 
+    @Autowired
+    OrderService orderService;
+
+    @Autowired
+    ShippingService shippingService;
 
     Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
@@ -60,21 +58,86 @@ public class RestaurantController {
         return categoryService.findCategoryById(id);
     }
 
+    @CrossOrigin
     @DeleteMapping("delete/{id}")
     public CommonResponse deleteById(@PathVariable int id) {
         return categoryService.deleteById(id);
     }
 
+
+    @CrossOrigin
     @PostMapping("saveProduct")
-    public CommonResponse saveProduct(@RequestBody ProductDto productDto) {
-        return productService.saveProduct(productDto);
+    @ResponseBody
+    public CommonResponse saveProduct(FoodDto foodDto, @RequestParam("file") MultipartFile file) {
+        return productService.saveProduct(foodDto, file);
     }
 
+    @CrossOrigin
+    @PostMapping("updateProduct")
+    @ResponseBody
+    public CommonResponse updateProduct(FoodDto foodDto, @RequestParam("file") MultipartFile file) {
+        return productService.updateProduct(foodDto, file);
+    }
+
+    @CrossOrigin
+    @GetMapping("listProducts")
+    public CommonResponse listProducts() {
+        logger.info("listProducts method access");
+        return productService.getAllProducts();
+    }
+
+    @CrossOrigin
+    @DeleteMapping("deleteProduct/{id}")
+    public CommonResponse deleteProductById(@PathVariable int id) {
+        return productService.deleteById(id);
+    }
+
+    @CrossOrigin
     @PostMapping("updateCategory")
     public CommonResponse updateCategory(@RequestBody CategoryDto categoryDto) {
         logger.info("UpdateCategory method access");
         return categoryService.updateCategory(categoryDto);
     }
 
+    @CrossOrigin
+    @PostMapping("placeOrder")
+    public CommonResponse placeOrder(@RequestBody OrderDto orderDto) {
+        logger.info("placeOrder method access");
+        return orderService.placeOrder(orderDto);
+    }
+
+    @CrossOrigin
+    @GetMapping("listAllOrders")
+    public CommonResponse listAllOrders() {
+        logger.info("listAllOrders method access");
+        return orderService.getAllOrders();
+    }
+
+    @CrossOrigin
+    @PostMapping("changeOrderStatus")
+    public CommonResponse changeOrderStatus(@RequestBody ChangeStatusDto changeStatus) {
+        logger.info("changeOrderStatus is method accessed");
+        return orderService.changeStatus(changeStatus);
+    }
+
+    @CrossOrigin
+    @PostMapping("saveDelivery")
+    public CommonResponse saveDelivery(@RequestBody DeliveryDto deliveryDto) {
+        logger.info("saveDelivery method is access");
+        return shippingService.saveDelivery(deliveryDto);
+    }
+
+    @CrossOrigin
+    @PostMapping("updateDelivery")
+    public CommonResponse updateDelivery(@RequestBody DeliveryDto deliveryDto) {
+        logger.info("updateDelivery method is access");
+        return shippingService.updateDelivery(deliveryDto);
+    }
+
+    @GetMapping("orders/foods/{orderId}")
+    public CommonResponse getAllOrderFoods(@PathVariable long orderId) {
+        logger.info("getAllOrderFoods -> method called");
+        return orderService.getOrderFood(orderId);
+    }
 
 }

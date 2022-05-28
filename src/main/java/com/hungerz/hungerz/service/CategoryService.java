@@ -51,6 +51,7 @@ public class CategoryService {
     }
 
     public CommonResponse findCategoryById(int id) {
+
         commonResponse.setMessage("Date retrieve from DB successfully");
         commonResponse.setStatus(true);
         commonResponse.setPayload(categoryRepo.findByCategoryId(id));
@@ -62,7 +63,7 @@ public class CategoryService {
             Optional<CategoryEntity> categoryEntityOptional = categoryRepo.findByCategoryId(categoryDto.getCategoryId());
 
             if (categoryEntityOptional.isPresent()) {
-
+                logger.info("method is working fine");
                 CategoryEntity categoryEntity = categoryEntityOptional.get();
                 categoryEntity.setCategoryStatus(categoryDto.getCategoryStatus());
                 categoryEntity.setCategoryName(categoryDto.getCategoryName());

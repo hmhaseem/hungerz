@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("api/v1/")
 public class HomeController {
 
     @Autowired
@@ -28,11 +29,11 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "Welcome to Daily Code Buffer!!";
+        return "Welcome to Hungerz !!";
     }
 
     @CrossOrigin
-    @PostMapping("/authenticate")
+    @PostMapping("authenticate")
     public ResponseEntity authenticate(@RequestBody JwtRequest jwtRequest) throws Exception {
 
         try {
@@ -48,15 +49,16 @@ public class HomeController {
 
         final UserDetails userDetails
                 = userService.loadUserByUsername(jwtRequest.getUsername());
-
+             Integer userRole= userService.getRoleIdByUserName(jwtRequest.getUsername()) ;
         final String token =
                 jwtUtility.generateToken(userDetails);
 
 
-        return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername()));
+        return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(),userRole));
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "register", method = RequestMethod.POST)
     public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
         return ResponseEntity.ok(userService.save(user));
     }
